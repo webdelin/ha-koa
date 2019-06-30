@@ -2,27 +2,16 @@ const Router = require('koa-router');
 const router = new Router();
 
 const productsCtrl = require('../controllers/products.js');
-
+const contactsCtrl = require('../controllers/contacts.js');
 const skillsCtrl = require('../controllers/skills.js');
-
 const authCtrl = require('../controllers/auth.js');
-
+console.clear()
 router.get('/', async (ctx) => {
   try {
     const products = await productsCtrl.get();
-    ctx.render('index', {
-      products
-    });
-  }
-  catch(err) {
-    console.error('err', err);
-    ctx.status = 404;
-  }
-});
-router.get('/', async (ctx) => {
-  try {
     const skills = await skillsCtrl.get();
     ctx.render('index', {
+      products,
       skills
     });
   }
@@ -36,6 +25,8 @@ router.get('/admin', async (ctx) => {
   console.log("ctx.session", ctx.session);
   try {
     if (ctx.session.isAuth) {
+        skills
+        console.log("ROUTER skills: ", skills);
       ctx.render('admin');
     }
     else {
@@ -59,15 +50,31 @@ router.post('/admin/upload', async (ctx) => {
     ctx.status = 404;
   }
 });
+
 router.post('/admin/skills', async (ctx) => {
   try {
-    await skillsCtrl.add({...ctx.request.files, ...ctx.request.body});
-
+    await skillsCtrl.add({...ctx.request.body});
     ctx.render('admin');
   }
   catch(err) {
     console.error('err', err);
     ctx.status = 404;
+  }
+});
+
+router.post('/', async (ctx) => {
+  console.log("ctx.flash",  ctx.flash);
+  try {
+    const msgslogin = ctx.flash && ctx.flash.get() ? ctx.flash.get().msgslogin : null;
+
+    ctx.return('/', {
+      msgslogin
+    });
+  }
+  catch(err) {
+    console.error('err', err);
+    ctx.status = 404;
+    ctx.redirect('#');
   }
 });
 

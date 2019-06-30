@@ -15,39 +15,21 @@ exports.get = () => new Promise(async (resolve, reject) => {
     reject(err);
   }
 });
-
-exports.add = (age, concerts, cities, years) => new Promise(async (resolve, reject) => {
-  console.log(resolve, reject)
-  try {
-    if (!age == age) {
-      reject('All fields age');
-      return;
-    } else if (!concerts == concerts) {
-      reject('All fields concerts ');
-      return;
-    } else if (!cities == cities) {
-      reject('All fields cities');
-      return;
-    } else if (!years == years) {
-      reject('All fields years');
-      return;
-    }
-
-    let skills = [];
-    if (fs.existsSync(skillsPath)) {
-      skills = JSON.parse(fs.readFileSync(skillsPath, 'utf-8'));
-    }
-    let newSkills = skills.slice();
-    newSkills.push({
-      "age": age,
-      "concerts": concerts,
-      "cities": cities,
-      "years": years
-    });
-
-    fs.writeFileSync(path.join(process.cwd(), '/temp/skills.json'), JSON.stringify(newSkills));
-
-    resolve(true);
+  exports.add = (data) => new Promise(async (resolve, reject) => {
+    JSON.stringify(data)
+    try {
+      let skills = [];
+      let newSkills = skills.slice()
+      newSkills.push(
+        {"number": data.age, text:"Возраст начала занятий на скрипке"},
+        {"number": data.concerts, text: 'Концертов отыграл'},
+        {"number": data.cities, text: 'Максимальное число городов в туре'},
+        {"number": data.years, text: 'Лет на сцене в качестве скрипача'},
+      );
+      fs.writeFileSync(path.join(process.cwd(), '/temp/skills.json'),JSON.stringify(newSkills));
+  //console.log('newSkills' , data)
+      resolve(true);
+    
   }
   catch(err) {
     reject(err);
